@@ -17,11 +17,13 @@ resource "huaweicloud_vpc_v1" "vpc_v1" {
 }
 
 resource "huaweicloud_vpc_subnet_v1" "subnet_v1" {
-  name       = "subnet-test"
-#  network_id = "${huaweicloud_networking_network_v2.network_1.id}"
-  cidr       = "192.168.0.0/24"
-  gateway_ip = "192.168.0.1"
-  vpc_id     = "${huaweicloud_vpc_v1.vpc_v1.id}"
+  name              = "subnet-test"
+#  network_id       = "${huaweicloud_networking_network_v2.network_1.id}"
+  cidr              = "192.168.0.0/24"
+  gateway_ip        = "192.168.0.1"
+  vpc_id            = "${huaweicloud_vpc_v1.vpc_v1.id}"
+  dns_list          = ["100.125.1.250","8.8.8.8"]
+  availability_zone = "la-south-2a"
 }
 
 # Create Security Group and rule ssh
@@ -45,20 +47,61 @@ resource "huaweicloud_lb_loadbalancer_v2" "lb_1" {
   vip_subnet_id = "${huaweicloud_vpc_subnet_v1.subnet_v1.subnet_id}"
 }
 
+resource "huaweicloud_lb_listener_v2" "listener_1" {
+  name            = "listener-ssh"
+  protocol        = "TCP"
+  protocol_port   = 22
+  loadbalancer_id = "${huaweicloud_lb_loadbalancer_v2.lb_1.id}"
+}
+
+resource "huaweicloud_lb_pool_v2" "pool_1" {
+  name        = "pool-ssh"
+  protocol    = "TCP"
+  lb_method   = "ROUND_ROBIN"
+  listener_id = "${huaweicloud_lb_listener_v2.listener_1.id}"
+}
+
 # Create ECS
 
-#resource "huaweicloud_compute_instance_v2" "basic" {
-#  name              = "basic"
-#  image_name        = "Ubuntu 18.04 server 64bit"
-#  flavor_name       = "s3.medium.2"
-#  key_pair          = "KeyPair-TF"
-#  security_groups   = ["${huaweicloud_networking_secgroup_v2.secgroup_1.name}"]
-#  availability_zone = "la-south-2a"
-#
-#  network {
-#    name = "${huaweicloud_vpc_v1.vpc_v1.id}"
-#  }
-#}
+resource "huaweicloud_compute_instance_v2" "basic" {
+  name              = "basic-test"
+  image_name        = "Ubuntu 18.04 server 64bit"
+  flavor_name       = "s3.medium.2"
+  key_pair          = "KeyPair-TF"
+  security_groups   = ["${huaweicloud_networking_secgroup_v2.secgroup_1.name}"]
+  availability_zone = "la-south-2a"
+
+  network {
+    uuid = "${huaweicloud_vpc_subnet_v1.subnet_v1.id}"
+  }
+}
+
+resource "huaweicloud_compute_instance_v2" "basic2" {
+  name              = "basic-test2"
+  image_name        = "Ubuntu 18.04 server 64bit"
+  flavor_name       = "s3.medium.2"
+  key_pair          = "KeyPair-TF"
+  security_groups   = ["${huaweicloud_networking_secgroup_v2.secgroup_1.name}"]
+  availability_zone = "la-south-2a"
+
+  network {
+    uuid = "${huaweicloud_vpc_subnet_v1.subnet_v1.id}"
+  }
+}
+
+resource "huaweicloud_lb_member_v2" "member_1" {
+  address       = "${huaweicloud_compute_instance_v2.basic.access_ip_v4}"
+  protocol_port = 22
+  pool_id       = "${huaweicloud_lb_pool_v2.pool_1.id}"
+  subnet_id     = "${huaweicloud_vpc_subnet_v1.subnet_v1.subnet_id}"
+}
+
+resource "huaweicloud_lb_member_v2" "member_2" {
+  address       = "${huaweicloud_compute_instance_v2.basic2.access_ip_v4}"
+  protocol_port = 22
+  pool_id       = "${huaweicloud_lb_pool_v2.pool_1.id}"
+  subnet_id     = "${huaweicloud_vpc_subnet_v1.subnet_v1.subnet_id}"
+}
 
 # Variables
 variable "ak" {
