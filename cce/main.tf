@@ -18,7 +18,6 @@ resource "huaweicloud_vpc_v1" "vpc_v1" {
 
 resource "huaweicloud_vpc_subnet_v1" "subnet_v1" {
   name              = "subnet-test"
-#  network_id       = "${huaweicloud_networking_network_v2.network_1.id}"
   cidr              = "192.168.0.0/24"
   gateway_ip        = "192.168.0.1"
   vpc_id            = "${huaweicloud_vpc_v1.vpc_v1.id}"
@@ -40,6 +39,19 @@ resource "huaweicloud_networking_secgroup_rule_v2" "secgroup_rule_1" {
   port_range_max    = 22
   remote_ip_prefix  = "0.0.0.0/0"
   security_group_id = "${huaweicloud_networking_secgroup_v2.secgroup_1.id}"
+}
+
+resource "huaweicloud_cce_cluster_v3" "cluster_1" {
+  name                   = "cluster-test"
+  billing_mode           = 0
+  cluster_type           = "VirtualMachine"
+  cluster_version        = "v1.13.7-r0"
+  flavor_id              = "cce.s1.small"
+  vpc_id                 = "${huaweicloud_vpc_v1.vpc_v1.id}"
+  subnet_id              = "${huaweicloud_vpc_subnet_v1.subnet_v1.subnet_id}"
+  container_network_type = "overlay_l2"
+  authentication_mode    = "rbac"
+  container_network_cidr = "172.16.0.0/16"
 }
 
 # Variables
