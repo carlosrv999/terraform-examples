@@ -22,7 +22,7 @@ resource "huaweicloud_vpc_subnet_v1" "subnet_v1" {
   gateway_ip        = "192.168.0.1"
   vpc_id            = "${huaweicloud_vpc_v1.vpc_v1.id}"
   dns_list          = ["100.125.1.250","8.8.8.8"]
-  availability_zone = "la-south-2a"
+  availability_zone = "${var.region}a"
 }
 
 resource "huaweicloud_nat_gateway_v2" "nat_1" {

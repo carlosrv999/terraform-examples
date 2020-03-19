@@ -23,7 +23,7 @@ resource "huaweicloud_vpc_subnet_v1" "subnet_v1" {
   gateway_ip        = "192.168.0.1"
   vpc_id            = "${huaweicloud_vpc_v1.vpc_v1.id}"
   dns_list          = ["100.125.1.250","8.8.8.8"]
-  availability_zone = "la-south-2a"
+  availability_zone = "${var.region}a"
 }
 
 # Create Security Group and rule ssh
@@ -69,7 +69,7 @@ resource "huaweicloud_compute_instance_v2" "basic" {
   flavor_name       = "s3.medium.2"
   key_pair          = "KeyPair-TF"
   security_groups   = ["${huaweicloud_networking_secgroup_v2.secgroup_1.name}"]
-  availability_zone = "la-south-2a"
+  availability_zone = "${var.region}a"
 
   network {
     uuid = "${huaweicloud_vpc_subnet_v1.subnet_v1.id}"
@@ -82,7 +82,7 @@ resource "huaweicloud_compute_instance_v2" "basic2" {
   flavor_name       = "s3.medium.2"
   key_pair          = "KeyPair-TF"
   security_groups   = ["${huaweicloud_networking_secgroup_v2.secgroup_1.name}"]
-  availability_zone = "la-south-2a"
+  availability_zone = "${var.region}a"
 
   network {
     uuid = "${huaweicloud_vpc_subnet_v1.subnet_v1.id}"

@@ -48,7 +48,7 @@ resource "huaweicloud_compute_instance_v2" "basic" {
   flavor_name       = "s3.medium.2"
   key_pair          = "KeyPair-TF"
   security_groups   = ["${huaweicloud_networking_secgroup_v2.secgroup_1.name}"]
-  availability_zone = "la-south-2a"
+  availability_zone = "${var.region}a"
 
   network {
     name = "${huaweicloud_vpc_v1.vpc_v1.id}"

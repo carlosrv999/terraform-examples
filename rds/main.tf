@@ -22,7 +22,7 @@ resource "huaweicloud_vpc_subnet_v1" "subnet_v1" {
   gateway_ip        = "192.168.0.1"
   vpc_id            = "${huaweicloud_vpc_v1.vpc_v1.id}"
   dns_list          = ["100.125.1.250","8.8.8.8"]
-  availability_zone = "la-south-2a"
+  availability_zone = "${var.region}a"
 }
 
 # Create Security Group and rule ssh
@@ -42,7 +42,7 @@ resource "huaweicloud_networking_secgroup_rule_v2" "secgroup_rule_1" {
 }
 
 resource "huaweicloud_rds_instance_v3" "instance" {
-  availability_zone = ["la-south-2a"]
+  availability_zone = ["${var.region}a"]
   db {
     password = "Huangwei#120521"
     type = "PostgreSQL"

@@ -22,18 +22,18 @@ resource "huaweicloud_vpc_subnet_v1" "subnet_v1" {
   gateway_ip        = "192.168.0.1"
   vpc_id            = "${huaweicloud_vpc_v1.vpc_v1.id}"
   dns_list          = ["100.125.1.250","8.8.8.8"]
-  availability_zone = "la-south-2a"
+  availability_zone = "${var.region}a"
 }
 
 resource "huaweicloud_mrs_cluster_v1" "cluster1" {
   cluster_name          = "mrs-cluster"
-  region                = "la-south-2"
+  region                = "${var.region}"
   billing_type          = 12
   master_node_num       = 2
   core_node_num         = 3
   master_node_size      = "c3.xlarge.2.linux.bigdata"
   core_node_size        = "c3.xlarge.2.linux.bigdata"
-  available_zone_id     = "sa-chile-1a"
+  available_zone_id     = "${var.region}a"
   vpc_id                = "${huaweicloud_vpc_v1.vpc_v1.id}"
   subnet_id             = "${huaweicloud_vpc_subnet_v1.subnet_v1.id}"
   cluster_version       = "MRS 1.8.7"
