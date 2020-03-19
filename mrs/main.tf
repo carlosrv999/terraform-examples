@@ -33,7 +33,7 @@ resource "huaweicloud_mrs_cluster_v1" "cluster1" {
   core_node_num         = 3
   master_node_size      = "c3.xlarge.2.linux.bigdata"
   core_node_size        = "c3.xlarge.2.linux.bigdata"
-  available_zone_id     = "la-south-2a"
+  available_zone_id     = "sa-chile-1a"
   vpc_id                = "${huaweicloud_vpc_v1.vpc_v1.id}"
   subnet_id             = "${huaweicloud_vpc_subnet_v1.subnet_v1.id}"
   cluster_version       = "MRS 1.8.7"
